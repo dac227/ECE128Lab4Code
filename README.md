@@ -1,1 +1,23 @@
 # ECE128Lab4Code
+
+This repository contains Verilog code for the design of a car safety system. This is for ECE 128 Lab 4. It contains a testbench and logical equations to set warning alarms in the safety system.
+
+Instructions:
+
+1. Create project in Vivaldo using correct FPGA selected 
+
+2. Move safety system code into source file. Can also swap these out each testing case.
+
+3. Assign inputs to switches on FPGA and outputs to LEDs usings provided file 
+
+4. Add the test bench scripts as constraints in Vivado 
+
+5. Run Simulation to check wave form (Test bench should show appropriate addition in hexadecimal) 
+
+6. Run synthesis and check resulting gate level results 
+
+7. Create bit stream 
+
+8. Program FPGA 
+
+9. Test FPGA if all test cases work
