@@ -1,0 +1,63 @@
+`timescale 1ns / 1ps
+
+module car_safety_system_tb;
+
+    // Inputs
+    reg [13:0] sw;
+
+    // Outputs
+    wire start_permit, chime, warn_pri2, warn_pri1, seat_warn, door_warn, hood_warn, trunk_warn, bat_warn, airbag_warn, temp_warn;
+
+    // Instantiate the Unit Under Test (UUT)
+    car_safety_system uut (
+        .sw(sw),
+        .start_permit(start_permit), 
+        .chime(chime), 
+        .warn_pri2(warn_pri2), 
+        .warn_pri1(warn_pri1), 
+        .seat_warn(seat_warn), 
+        .door_warn(door_warn), 
+        .hood_warn(hood_warn), 
+        .trunk_warn(trunk_warn), 
+        .bat_warn(bat_warn), 
+        .airbag_warn(airbag_warn), 
+        .temp_warn(temp_warn)
+    );
+
+    initial begin
+        // All are off so warnings should flash except chime but start permit on because of service 
+        sw = 14'b00000000000000;
+        
+        #10;
+
+        // Should everything ok for start 
+        sw = 14'b11111111111111;
+  
+        #20;
+    
+        // Should show no warnings 
+        sw = 14'b11000111100100;
+ 
+        #20;
+ 
+        //Trigger of battery failure to show warning 1, bat failure, and chime since key is in
+        sw = 14'b11111101111110;
+ 
+        #20;
+        
+        //Has a bat fault but in service mode so can start
+        sw = 14'b11111101111111;
+        
+        #20;
+        
+        //Show functional with start permit and no warning
+        
+        sw = 14'b11111111100100;
+        
+        #20
+
+        $finish;
+    end
+
+endmodule
+
