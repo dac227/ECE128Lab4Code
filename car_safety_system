@@ -1,0 +1,47 @@
+car_safety_system
+module car_safety_system (input  wire [13:0] sw,
+                          output start_permit, chime, warn_pri2, warn_pri1, seat_warn, door_warn, hood_warn, trunk_warn, bat_warn, airbag_warn, temp_warn
+);
+
+    // Active high
+    wire sb       = sw[13]; // SW15: Driver seatbelt fastened
+    wire door     = sw[12]; // SW14: Driver door closed
+    wire key      = sw[11]; // SW13: Key inserted
+    wire brk      = sw[10]; // SW12: Brake pedal pressed
+    wire park     = sw[9]; // SW11: Gear in Park
+    wire hood     = sw[8]; // SW10: Hood closed
+    wire bat_ok   = sw[7];  // SW9 : Battery OK
+    wire aib_ok   = sw[6];  // SW8 : Airbag OK
+    wire tmp_ok   = sw[5];  // SW7 : Coolant temp OK
+    wire pass_occ = sw[4];  // SW6 : Passenger seat occupied
+    wire sb_p     = sw[3];  // SW5 : Passenger seatbelt fastened
+    wire trunk    = sw[2];  // SW4 : Trunk closed
+    wire pbrk     = sw[1];  // SW3 : Parking brake engaged
+    wire srv      = sw[0];  // SW2 : Service mode jumper
+
+    // Individual Warning Logic (Active High: 1 = Fault/Warning condition)
+    assign seat_warn = ~sb || (pass_occ && ~sb_p);
+    assign door_warn   = ~door;
+    assign hood_warn   = ~hood;
+    assign trunk_warn  = ~trunk;
+    assign bat_warn    = ~bat_ok;
+    assign airbag_warn = ~aib_ok;
+    assign temp_warn   = ~tmp_ok;
+
+  
+    //Critical faults overheating, airbags, battery, hood
+    assign warn_pri1 = temp_warn || airbag_warn || bat_warn || hood_warn;
+
+    // Door open, Trunk open, Seatbelt unfastened
+    assign warn_pri2 = door_warn || trunk_warn || seat_warn;
+
+    // Chime indicates whether there is a warning or not
+    assign chime = key && (warn_pri1 || warn_pri2);
+
+    // Engine allowed to start if Key is inserted, Gear in Park, Brake pedal pressed, 
+    // Driver seatbelt fastened, Driver door closed, Hood closed, and Systems OK.
+    // Service mode lets you start no matter what
+    assign start_permit = srv ? 1'b1 : (key && park && brk && hood && door && sb && bat_ok && tmp_ok);
+
+endmodule
+
